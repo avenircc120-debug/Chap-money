@@ -1,0 +1,31 @@
+modules = ["nodejs-24", "postgresql-16"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+FEDAPAY_MODE = "sandbox"
+FEDAPAY_PUBLIC_KEY = "pk_sandbox_S65MFL__SLC4cX3wU7wd7XNB"
+NEON_DATABASE_URL = "postgresql://neondb_owner:npg_DlFV47Qexsqb@ep-spring-dream-as39fxxu-pooler.c-4.eu-central-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+VITE_FEDAPAY_PUBLIC_KEY = "pk_sandbox_S65MFL__SLC4cX3wU7wd7XNB"

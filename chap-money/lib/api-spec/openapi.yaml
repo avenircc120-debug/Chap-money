@@ -1,0 +1,251 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Chap Money checkout API — FedaPay direct mobile money + card redirect
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: checkout
+    description: Checkout and payment operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /checkout/mobile:
+    post:
+      operationId: initiateMobilePayment
+      tags: [checkout]
+      summary: Initiate direct mobile money payment (no redirect)
+      description: Creates a FedaPay transaction and pushes a USSD/OTP request to the customer phone. No redirect needed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MobilePaymentInput"
+      responses:
+        "200":
+          description: Payment push sent to phone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutInitiated"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: FedaPay or server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkout/card:
+    post:
+      operationId: initiateCardPayment
+      tags: [checkout]
+      summary: Initiate card payment (returns FedaPay hosted URL for redirect)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardPaymentInput"
+      responses:
+        "200":
+          description: FedaPay card payment URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutCard"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkout/status/{transactionId}:
+    get:
+      operationId: getPaymentStatus
+      tags: [checkout]
+      summary: Poll payment status for a transaction
+      parameters:
+        - in: path
+          name: transactionId
+          required: true
+          schema:
+            type: string
+          description: FedaPay transaction ID
+      responses:
+        "200":
+          description: Current payment status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentStatus"
+        "404":
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    MobilePaymentInput:
+      type: object
+      required:
+        - amount
+        - description
+        - customerEmail
+        - customerFirstname
+        - customerLastname
+        - phoneNumber
+        - country
+        - operator
+      properties:
+        amount:
+          type: integer
+          description: Amount in XOF (integer, no decimals)
+          example: 5000
+        description:
+          type: string
+          description: Payment description
+          example: "Achat produit #123"
+        customerEmail:
+          type: string
+          description: Customer email
+          example: "client@example.com"
+        customerFirstname:
+          type: string
+          example: "Jean"
+        customerLastname:
+          type: string
+          example: "Dupont"
+        phoneNumber:
+          type: string
+          description: Phone number without country prefix
+          example: "97000000"
+        country:
+          type: string
+          description: Two-letter country code lowercase
+          example: "bj"
+        operator:
+          type: string
+          description: FedaPay operator mode code (mtn, moov, sbin, mtn_ci, free_sn, moov_tg, moov_bf, airtel_ne, mtn_open_gn)
+          example: "mtn"
+
+    CardPaymentInput:
+      type: object
+      required:
+        - amount
+        - description
+        - customerEmail
+        - customerFirstname
+        - customerLastname
+      properties:
+        amount:
+          type: integer
+          description: Amount in XOF
+          example: 5000
+        description:
+          type: string
+          example: "Achat produit #123"
+        customerEmail:
+          type: string
+          example: "client@example.com"
+        customerFirstname:
+          type: string
+          example: "Jean"
+        customerLastname:
+          type: string
+          example: "Dupont"
+
+    CheckoutInitiated:
+      type: object
+      required:
+        - transactionId
+        - status
+        - message
+      properties:
+        transactionId:
+          type: integer
+          description: FedaPay transaction ID
+        status:
+          type: string
+          description: Initial payment status (pending)
+        message:
+          type: string
+          description: User-friendly confirmation message
+
+    CheckoutCard:
+      type: object
+      required:
+        - transactionId
+        - paymentUrl
+      properties:
+        transactionId:
+          type: integer
+        paymentUrl:
+          type: string
+          description: FedaPay hosted checkout URL for card payment
+
+    PaymentStatus:
+      type: object
+      required:
+        - transactionId
+        - status
+      properties:
+        transactionId:
+          type: string
+        status:
+          type: string
+          description: "pending | approved | declined | cancelled | transferred"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
