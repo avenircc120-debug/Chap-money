@@ -142,6 +142,7 @@ async function savePayment(params: {
   country?: string;
   phoneNumber?: string;
   paymentUrl?: string;
+  apiPublicKey?: string | null;
 }) {
   try {
     await supabaseRequest("payments", {
@@ -160,6 +161,7 @@ async function savePayment(params: {
         country: params.country ?? null,
         phone_number: params.phoneNumber ?? null,
         payment_url: params.paymentUrl ?? null,
+        api_public_key: params.apiPublicKey ?? null,
         mode: FEDAPAY_MODE,
       }),
     });
@@ -171,7 +173,31 @@ async function savePayment(params: {
 
 // ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Route handlers ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
 
-async function handleMobile(body: Record<string, unknown>, res: VercelResponse) {
+// ─── API key resolver ─────────────────────────────────────────────────────────
+// Valide la clé publique du site (header X-Api-Key ou champ apiPublicKey dans le body).
+// Renvoie la public_key si elle correspond à une credential active, sinon null.
+async function resolveApiKey(
+  req: VercelRequest,
+  body: Record<string, unknown>,
+): Promise<string | null> {
+  const raw =
+    (req.headers["x-api-key"] as string | undefined) ??
+    (body.apiPublicKey as string | undefined) ??
+    "";
+  if (!raw.trim()) return null;
+  const key = raw.trim();
+  try {
+    const rows = await supabaseRequest<Array<{ public_key: string }>>(
+      `api_credentials?public_key=eq.${encodeURIComponent(key)}&is_active=eq.true&select=public_key&limit=1`,
+    );
+    return rows[0]?.public_key ?? null;
+  } catch {
+    return null; // non-bloquant : le paiement continue sans attribution de site
+  }
+}
+
+async function handleMobile(req: VercelRequest, res: VercelResponse) {
+  const body = (req.body ?? {}) as Record<string, unknown>;
   const { amount, description, phoneNumber, country, operator } =
     body as Record<string, string | number>;
 
@@ -239,6 +265,8 @@ async function handleMobile(body: Record<string, unknown>, res: VercelResponse) 
   }
   console.log(`[mobile] push OK → ${JSON.stringify(pushResp).slice(0, 120)}`);
 
+  const apiPublicKey = await resolveApiKey(req, body);
+
   await savePayment({
     fedapayId: tx.id,
     amount: Number(amount),
@@ -251,6 +279,7 @@ async function handleMobile(body: Record<string, unknown>, res: VercelResponse) 
     operator: String(operator),
     country: String(country),
     phoneNumber: String(phoneNumber),
+    apiPublicKey,
   });
 
   return res.json({
@@ -260,7 +289,8 @@ async function handleMobile(body: Record<string, unknown>, res: VercelResponse) 
   });
 }
 
-async function handleCard(body: Record<string, unknown>, res: VercelResponse) {
+async function handleCard(req: VercelRequest, res: VercelResponse) {
+  const body = (req.body ?? {}) as Record<string, unknown>;
   const { amount, description } = body as Record<string, string | number>;
 
   if (!amount) {
@@ -279,6 +309,7 @@ async function handleCard(body: Record<string, unknown>, res: VercelResponse) {
 
   const { token, url } = await generateToken(tx.id);
   const paymentUrl = url ?? `${FEDAPAY_CHECKOUT}/${token}`;
+  const apiPublicKey = await resolveApiKey(req, body);
 
   await savePayment({
     fedapayId: tx.id,
@@ -290,17 +321,21 @@ async function handleCard(body: Record<string, unknown>, res: VercelResponse) {
     status: "pending",
     paymentType: "card",
     paymentUrl,
+    apiPublicKey,
   });
 
   return res.json({ transactionId: tx.id, paymentUrl });
 }
 
-async function handleCardSave(body: Record<string, unknown>, res: VercelResponse) {
+async function handleCardSave(req: VercelRequest, res: VercelResponse) {
+  const body = (req.body ?? {}) as Record<string, unknown>;
   const { transactionId, amount, description, status } = body as Record<string, string | number>;
 
   if (!transactionId) {
     return res.status(400).json({ error: "transactionId requis" });
   }
+
+  const apiPublicKey = await resolveApiKey(req, body);
 
   await savePayment({
     fedapayId: Number(transactionId),
@@ -311,6 +346,7 @@ async function handleCardSave(body: Record<string, unknown>, res: VercelResponse
     customerLastname: OWNER_LASTNAME,
     status: status ? String(status) : "pending",
     paymentType: "card",
+    apiPublicKey,
   });
 
   return res.json({ ok: true });
@@ -508,15 +544,17 @@ function genKey(prefix: string): string {
 }
 
 async function handleGetCredentials(_req: VercelRequest, res: VercelResponse) {
+  // secret_key et webhook_key ne sont JAMAIS renvoyés dans le listing :
+  // ils sont affichés une seule fois à la création / régénération.
   const rows = await supabaseRequest<Array<Record<string, unknown>>>(
-    "api_credentials?select=id,site_name,webhook_url,public_key,webhook_key,is_active,created_at&order=created_at.desc",
+    "api_credentials?select=id,site_name,webhook_url,public_key,is_active,created_at&order=created_at.desc",
   );
   return res.json(rows.map((row) => ({
     id: row.id,
     siteName: row.site_name,
     webhookUrl: row.webhook_url,
     publicKey: row.public_key,
-    webhookKey: row.webhook_key,
+    // secretKey et webhookKey intentionnellement omis (one-time disclosure)
     isActive: row.is_active,
     createdAt: row.created_at,
   })));
@@ -718,13 +756,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return await handleWebhook(req, res);
     }
     if (url.includes("/api/checkout/mobile") && req.method === "POST") {
-      return await handleMobile(req.body as Record<string, unknown>, res);
+      return await handleMobile(req, res);
     }
     if (url.includes("/api/checkout/card/save") && req.method === "POST") {
-      return await handleCardSave(req.body as Record<string, unknown>, res);
+      return await handleCardSave(req, res);
     }
     if (url.includes("/api/checkout/card") && req.method === "POST") {
-      return await handleCard(req.body as Record<string, unknown>, res);
+      return await handleCard(req, res);
     }
     const statusMatch = url.match(/\/api\/checkout\/status\/(\d+)/);
     if (statusMatch && req.method === "GET") {
@@ -766,14 +804,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // ── Credentials routes ────────────────────────────────────────────────────
     if (url.match(/\/api\/credentials\/[\w-]+\/regenerate$/) && req.method === "POST") {
+      if (!requireAdmin(req, res)) return;
       const m = url.match(/\/api\/credentials\/([\w-]+)\/regenerate/);
       return await handleRegenerateCredential(m![1], res);
     }
     if (url.match(/\/api\/credentials\/[\w-]+\/toggle$/) && req.method === "PATCH") {
+      if (!requireAdmin(req, res)) return;
       const m = url.match(/\/api\/credentials\/([\w-]+)\/toggle/);
       return await handleToggleCredential(m![1], res);
     }
     if (url.match(/\/api\/credentials\/[\w-]+$/) && req.method === "DELETE") {
+      if (!requireAdmin(req, res)) return;
       const m = url.match(/\/api\/credentials\/([\w-]+)$/);
       return await handleDeleteCredential(m![1], res);
     }
