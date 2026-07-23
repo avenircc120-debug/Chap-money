@@ -11,10 +11,10 @@ export interface MobilePaymentInput {
   amount: number;
   /** Payment description */
   description: string;
-  /** Customer email — overridden server-side */
-  customerEmail?: string;
-  customerFirstname?: string;
-  customerLastname?: string;
+  /** Customer email */
+  customerEmail: string;
+  customerFirstname: string;
+  customerLastname: string;
   /** Phone number without country prefix */
   phoneNumber: string;
   /** Two-letter country code lowercase */

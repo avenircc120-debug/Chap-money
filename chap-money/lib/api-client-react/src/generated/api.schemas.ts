@@ -14,10 +14,10 @@ export interface MobilePaymentInput {
   amount: number;
   /** Payment description */
   description: string;
-  /** Customer email — overridden server-side, can be omitted */
-  customerEmail?: string;
-  customerFirstname?: string;
-  customerLastname?: string;
+  /** Customer email */
+  customerEmail: string;
+  customerFirstname: string;
+  customerLastname: string;
   /** Phone number without country prefix */
   phoneNumber: string;
   /** Two-letter country code lowercase */
@@ -30,10 +30,9 @@ export interface CardPaymentInput {
   /** Amount in XOF */
   amount: number;
   description: string;
-  /** Customer fields — overridden server-side, can be omitted */
-  customerEmail?: string;
-  customerFirstname?: string;
-  customerLastname?: string;
+  customerEmail: string;
+  customerFirstname: string;
+  customerLastname: string;
 }
 
 export interface CheckoutInitiated {

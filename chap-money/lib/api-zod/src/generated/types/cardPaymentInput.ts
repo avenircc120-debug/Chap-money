@@ -10,8 +10,7 @@ export interface CardPaymentInput {
   /** Amount in XOF */
   amount: number;
   description: string;
-  /** Overridden server-side */
-  customerEmail?: string;
-  customerFirstname?: string;
-  customerLastname?: string;
+  customerEmail: string;
+  customerFirstname: string;
+  customerLastname: string;
 }

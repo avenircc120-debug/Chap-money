@@ -24,9 +24,9 @@ export const HealthCheckResponse = zod.object({
 export const InitiateMobilePaymentBody = zod.object({
   "amount": zod.number().describe('Amount in XOF (integer, no decimals)'),
   "description": zod.string().describe('Payment description'),
-  "customerEmail": zod.string().optional().describe('Overridden server-side'),
-  "customerFirstname": zod.string().optional(),
-  "customerLastname": zod.string().optional(),
+  "customerEmail": zod.string().describe('Customer email'),
+  "customerFirstname": zod.string(),
+  "customerLastname": zod.string(),
   "phoneNumber": zod.string().describe('Phone number without country prefix'),
   "country": zod.string().describe('Two-letter country code lowercase'),
   "operator": zod.string().describe('FedaPay operator mode code (mtn, moov, sbin, mtn_ci, free_sn, moov_tg, moov_bf, airtel_ne, mtn_open_gn)')
@@ -45,9 +45,9 @@ export const InitiateMobilePaymentResponse = zod.object({
 export const InitiateCardPaymentBody = zod.object({
   "amount": zod.number().describe('Amount in XOF'),
   "description": zod.string(),
-  "customerEmail": zod.string().optional(),
-  "customerFirstname": zod.string().optional(),
-  "customerLastname": zod.string().optional()
+  "customerEmail": zod.string(),
+  "customerFirstname": zod.string(),
+  "customerLastname": zod.string()
 })
 
 export const InitiateCardPaymentResponse = zod.object({
