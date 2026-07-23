@@ -1,7 +1,8 @@
 {
-  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-spec run codegen && pnpm --filter @workspace/chap-money run build",
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @workspace/api-spec run codegen && pnpm --filter @workspace/chap-money run build",
   "outputDirectory": "artifacts/chap-money/dist/public",
+  "framework": null,
   "rewrites": [
     {
       "destination": "/api/handler",
